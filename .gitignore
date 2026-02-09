@@ -11,7 +11,13 @@ __pycache__
 
 # Coverage artifacts
 .coverage
+.coverage.*
 htmlcov/
+coverage.xml
+*.cover
+
+# Pre-commit
+.pre-commit-config.yaml.bak
 
 *.pyc
 .cache

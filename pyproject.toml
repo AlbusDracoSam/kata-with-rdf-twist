@@ -12,6 +12,15 @@ dependencies = [
 dev = [
     "approvaltests>=14.0.0",
     "pytest==8.3.3",
+    "pytest-cov>=5.0.0",
+    "black>=24.0.0",
+    "isort>=5.13.0",
+    "ruff>=0.5.0",
+    "mypy>=1.8.0",
+    "pylint>=3.0.0",
+    "flake8>=7.0.0",
+    "autopep8>=2.0.0",
+    "pre-commit>=3.6.0",
 ]
 
 [tool.isort]
@@ -37,3 +46,59 @@ extend-ignore = ["E203", "W503"]
 
 [tool.autopep8]
 max_line_length = 120
+
+[tool.pytest.ini_options]
+testpaths = ["python/tests"]
+pythonpath = ["python"]
+addopts = "--import-mode=importlib --cov=python --cov-report=term-missing --cov-report=html --cov-report=xml"
+
+[tool.coverage.run]
+source = ["python"]
+omit = [
+    "*/tests/*",
+    "*/test_*.py",
+    "*/__pycache__/*",
+    "*/conftest.py",
+    "*/texttest_fixture.py",
+]
+branch = true
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+    "@abstractmethod",
+    "if False:",
+    "if 0:",
+    "if __debug__:",
+]
+precision = 2
+show_missing = true
+skip_covered = false
+skip_empty = true
+
+[tool.coverage.report.fail_under]
+# Fail if coverage is below this percentage
+line = 80.0
+branch = 70.0
+
+[tool.coverage.html]
+directory = "htmlcov"
+title = "Code Coverage Report"
+
+[tool.mypy]
+python_version = "3.12"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+check_untyped_defs = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+ignore_missing_imports = true
