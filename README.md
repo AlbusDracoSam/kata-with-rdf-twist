@@ -19,17 +19,35 @@ Before you begin, ensure you have the following installed:
 
 ### All Users (Linux/macOS/WSL)
 
-2. **Make**
+2. **Git**
    - Ubuntu/Debian:
      ```bash
-     sudo apt-get update && sudo apt-get install build-essential
+     sudo apt-get update && sudo apt-get install git
      ```
    - macOS:
      ```bash
      xcode-select --install
      ```
+   - Verify installation:
+     ```bash
+     git --version
+     ```
 
-3. **uv (Python package installer)**
+3. **Make**
+   - Ubuntu/Debian:
+     ```bash
+     sudo apt-get update && sudo apt-get install build-essential
+     ```
+   - macOS: (if you installed this for git above, skip this step)
+     ```bash
+     xcode-select --install
+     ```
+   - Verify installation:
+     ```bash
+     make --version
+     ```
+
+4. **uv (Python package installer)**
    - Install via the official installer:
      ```bash
      curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -37,6 +55,18 @@ Before you begin, ensure you have the following installed:
    - Or via pip:
      ```bash
      pip install uv
+     ```
+   - Verify installation:
+     ```bash
+     uv --version
+     ```
+
+5. **VSCode (Recommended IDE)**
+   - Download and install from: https://code.visualstudio.com/
+   - Follow the installer for your operating system
+   - Once installed, you can open VSCode in any directory with:
+     ```bash
+     code .
      ```
 
 ## Getting Started
