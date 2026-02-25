@@ -1,14 +1,9 @@
 # -*- coding: utf-8 -*-
-"""
-RDF Store for Gilded Rose inventory management.
-
-This module provides utilities for converting Items to/from RDF representation
-and performing quality updates using RDF/SPARQL operations.
-"""
+"""RDF-backed inventory store for the Gilded Rose kata."""
 
 import os
 
-from rdflib import Graph, Namespace, Literal, URIRef
+from rdflib import Graph, Literal, Namespace, URIRef
 from rdflib.namespace import RDF, XSD
 
 # Define namespace for Gilded Rose ontology
@@ -33,6 +28,14 @@ class RDFItemStore:
         self.graph = Graph()
         self.graph.bind("gr", GR)
         self._load_schema()
+        self._supported_formats = {
+            "turtle": "turtle",
+            "ttl": "turtle",
+            "xml": "xml",
+            "rdfxml": "xml",
+            "json-ld": "json-ld",
+            "jsonld": "json-ld",
+        }
 
     def _load_schema(self):
         """Load the RDF schema from schema.ttl (path relative to this module)."""
@@ -61,6 +64,15 @@ class RDFItemStore:
             return TYPE_CONJURED
         return TYPE_NORMAL
 
+    def _resolve_format(self, rdf_format: str) -> str:
+        """Normalize format aliases to an rdflib serializer/parser format."""
+        normalized = str(rdf_format).strip().lower()
+        if normalized not in self._supported_formats:
+            raise ValueError(
+                "Unsupported RDF format. Use one of: turtle/ttl, xml/rdfxml, json-ld/jsonld"
+            )
+        return self._supported_formats[normalized]
+
     def item_to_rdf(self, item, item_id: int) -> URIRef:
         """
         Convert an Item to RDF triples and add them to the graph.
@@ -85,6 +97,22 @@ class RDFItemStore:
             item.sell_in = int(sell_in_val)
         if quality_val is not None:
             item.quality = int(quality_val)
+
+    def serialize_inventory(self, path: str, rdf_format: str = "turtle"):
+        """
+        Persist the inventory graph to disk in an RDF format.
+        Supported formats: turtle, xml, json-ld (plus aliases).
+        """
+        resolved = self._resolve_format(rdf_format)
+        self.graph.serialize(destination=path, format=resolved)
+
+    def load_inventory(self, path: str, rdf_format: str = "turtle"):
+        """
+        Load persisted RDF inventory into this graph.
+        Keeps schema + previously loaded data and parses additional triples.
+        """
+        resolved = self._resolve_format(rdf_format)
+        self.graph.parse(path, format=resolved)
 
     def _get_inventory_item_uris(self):
         """Return URIs of all inventory items (subjects that have gr:sellIn)."""
